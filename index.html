@@ -1,5 +1,18 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#07120E">
 <title>Бутылочка на кухне</title>
+<meta name="description" content="Правда или действие: крути бутылку, 160 вопросов и заданий в трёх режимах жести.">
+<meta property="og:title" content="Бутылочка на кухне">
+<meta property="og:description" content="Правда или действие: крути бутылку, 160 вопросов и заданий в трёх режимах жести.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%BE%3C/text%3E%3C/svg%3E">
 <style>
+*{margin:0;padding:0}
 :root{
   --glass-900:#07120E;
   --glass-850:#0A1A15;
@@ -144,6 +157,8 @@ footer{text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppe
   *{animation-duration:.01ms!important;transition-duration:.12s!important}
 }
 </style>
+</head>
+<body>
 
 <div class="blob a"></div><div class="blob b"></div>
 
@@ -545,3 +560,5 @@ const muteBtn=document.getElementById('mute');
 muteBtn.addEventListener('click',()=>{sound=!sound;muteBtn.textContent='звук: '+(sound?'вкл':'выкл');if(sound)tick(1);});
 render();
 </script>
+</body>
+</html>
