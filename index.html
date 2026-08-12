@@ -11,6 +11,13 @@
 <meta property="og:description" content="Правда или действие: крути бутылку, 160 вопросов и заданий в трёх режимах жести.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8D%BE%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Бутылочка">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 *{margin:0;padding:0}
 :root{
@@ -52,7 +59,11 @@ body::before{
 .blob.b{width:300px;height:300px;right:-80px;bottom:4%;background:rgba(95,191,154,.18);animation:drift 27s ease-in-out infinite reverse}
 @keyframes drift{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(30px,-36px,0)}}
 
-.wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:22px 18px 40px;display:flex;flex-direction:column;gap:18px;min-height:100%}
+.wrap{
+  position:relative;z-index:1;max-width:640px;margin:0 auto;
+  padding:calc(22px + env(safe-area-inset-top,0px)) calc(18px + env(safe-area-inset-right,0px)) 40px calc(18px + env(safe-area-inset-left,0px));
+  display:flex;flex-direction:column;gap:18px;min-height:100%;
+}
 
 header{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center}
 .eyebrow{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--muted)}
@@ -153,6 +164,48 @@ svg.ring{position:absolute;inset:0;width:100%;height:100%}
 footer{text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#4d675e;margin-top:auto;padding-top:8px}
 .mute{background:none;border:0;color:#4d675e;font:inherit;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
 .mute:hover{color:var(--muted)}
+/* ---- планшет: iPad и всё, что шире ---- */
+@media (min-width:700px){
+  .wrap{max-width:860px;gap:24px;
+    padding-left:calc(32px + env(safe-area-inset-left,0px));
+    padding-right:calc(32px + env(safe-area-inset-right,0px));}
+  .eyebrow{font-size:13px;letter-spacing:.38em}
+  h1{font-size:clamp(58px,8.2vw,86px)}
+  .sub{font-size:17.5px;max-width:46ch}
+  .chip{font-size:15px;padding:12px 24px}
+  .table{width:min(78vw,62vh,660px)}
+  .bottle{width:54%;height:54%}
+  .hub{width:16px;height:16px}
+  .hint{font-size:14px}
+  .players input{font-size:16.5px;padding:13px 17px;width:min(100%,430px)}
+  .stat{padding:15px 8px}
+  .stat b{font-size:28px}
+  .stat span{font-size:11.5px}
+  .sheet{transform:translateY(118%)}
+  .card{max-width:700px;padding:28px 30px;border-radius:28px;border-bottom:1px solid var(--glass-line);margin-bottom:30px}
+  .badge{font-size:12.5px}
+  .who{font-size:14px}
+  .task{font-size:clamp(27px,3.1vw,35px)}
+  .btn{font-size:16.5px;padding:17px 22px;border-radius:14px}
+  .penalty{font-size:16px}
+  footer{font-size:12px}
+}
+/* ---- iPad в ландшафте: две колонки, стол во всю высоту ---- */
+@media (min-width:900px) and (orientation:landscape){
+  .wrap{max-width:1200px;display:grid;grid-template-columns:minmax(300px,1fr) auto;
+        grid-template-rows:repeat(6,min-content);
+        align-items:center;align-content:center;gap:20px 56px}
+  .wrap>*{grid-column:1}
+  .wrap>.stage{grid-column:2;grid-row:1/-1;justify-self:center;padding:0}
+  h1{font-size:clamp(46px,4.8vw,68px)}
+  .sub{max-width:38ch}
+  header{align-items:flex-start;text-align:left}
+  .levels{justify-content:flex-start}
+  .hint,footer{text-align:left}
+  .players{justify-content:flex-start}
+  .table{width:min(46vw,78vh,620px)}
+  footer{margin-top:0}
+}
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;transition-duration:.12s!important}
 }
