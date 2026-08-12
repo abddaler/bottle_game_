@@ -1,0 +1,547 @@
+<title>Бутылочка на кухне</title>
+<style>
+:root{
+  --glass-900:#07120E;
+  --glass-850:#0A1A15;
+  --glass-800:#0E241D;
+  --glass-700:#143329;
+  --glass-line:#215043;
+  --amber:#E9A13B;
+  --amber-soft:#F7CE86;
+  --verd:#5FBF9A;
+  --verd-soft:#9EE0C6;
+  --cap:#D9483B;
+  --cream:#F1E8D6;
+  --muted:#8AA79B;
+  --shadow:0 24px 60px rgba(0,0,0,.55);
+  --display:Georgia,"Times New Roman","Droid Serif",serif;
+  --ui:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:
+    radial-gradient(90% 60% at 50% 8%, rgba(233,161,59,.13) 0%, transparent 60%),
+    radial-gradient(70% 50% at 50% 100%, rgba(95,191,154,.10) 0%, transparent 65%),
+    var(--glass-900);
+  color:var(--cream);
+  font-family:var(--ui);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(115% 85% at 50% 45%, transparent 45%, rgba(0,0,0,.55) 100%);
+}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.5;pointer-events:none;z-index:0}
+.blob.a{width:340px;height:340px;left:-90px;top:6%;background:rgba(233,161,59,.20);animation:drift 22s ease-in-out infinite}
+.blob.b{width:300px;height:300px;right:-80px;bottom:4%;background:rgba(95,191,154,.18);animation:drift 27s ease-in-out infinite reverse}
+@keyframes drift{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(30px,-36px,0)}}
+
+.wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:22px 18px 40px;display:flex;flex-direction:column;gap:18px;min-height:100%}
+
+header{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center}
+.eyebrow{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--muted)}
+h1{
+  font-family:var(--display);font-weight:400;font-size:clamp(38px,11vw,60px);
+  margin:0;letter-spacing:.02em;line-height:.98;text-wrap:balance;
+  background:linear-gradient(180deg,var(--cream) 30%,var(--amber-soft) 130%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+h1 em{font-style:italic;color:var(--amber)}
+.sub{font-size:13.5px;color:var(--muted);max-width:34ch;line-height:1.5}
+
+.levels{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.chip{
+  font:inherit;font-size:12.5px;letter-spacing:.06em;color:var(--muted);
+  background:rgba(255,255,255,.03);border:1px solid var(--glass-line);
+  border-radius:999px;padding:8px 15px;cursor:pointer;transition:.2s ease;
+}
+.chip:hover{color:var(--cream);border-color:#2f6c5b}
+.chip[aria-pressed="true"]{color:var(--glass-900);background:var(--cream);border-color:var(--cream);font-weight:600}
+.chip[data-lvl="hot"][aria-pressed="true"]{background:var(--amber);border-color:var(--amber)}
+.chip[data-lvl="x"][aria-pressed="true"]{background:var(--cap);border-color:var(--cap);color:#fff}
+.chip:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--amber-soft);outline-offset:3px}
+
+.stage{position:relative;display:grid;place-items:center;padding:4px 0 2px}
+.table{
+  position:relative;width:min(86vw,420px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(circle at 50% 42%, var(--glass-700) 0%, var(--glass-850) 62%, #050D0A 100%);
+  box-shadow:var(--shadow), inset 0 0 0 1px rgba(255,255,255,.05), inset 0 30px 70px rgba(0,0,0,.5);
+  display:grid;place-items:center;cursor:pointer;user-select:none;
+  transition:transform .25s cubic-bezier(.2,.9,.3,1.4);
+}
+.table:active{transform:scale(.985)}
+.table.armed{animation:breathe 3.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{box-shadow:var(--shadow),inset 0 0 0 1px rgba(255,255,255,.05),inset 0 30px 70px rgba(0,0,0,.5)}50%{box-shadow:0 24px 70px rgba(0,0,0,.6),0 0 44px rgba(233,161,59,.13),inset 0 0 0 1px rgba(255,255,255,.08),inset 0 30px 70px rgba(0,0,0,.5)}}
+svg.ring{position:absolute;inset:0;width:100%;height:100%}
+.wedge{transition:opacity .35s ease,filter .35s ease}
+.ring.dim .wedge{opacity:.32}
+.ring.dim .wedge.win{opacity:1;filter:drop-shadow(0 0 12px currentColor)}
+.wlabel{font-family:var(--ui);font-size:13px;letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+
+.bottle{position:absolute;width:48%;height:48%;transform-origin:50% 50%;will-change:transform;filter:drop-shadow(0 10px 18px rgba(0,0,0,.6))}
+.hub{position:absolute;width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.16);box-shadow:0 0 14px rgba(255,255,255,.14)}
+
+.hint{text-align:center;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);min-height:18px}
+.hint b{color:var(--amber-soft);font-weight:600}
+
+.players{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.players input{
+  font:inherit;font-size:13px;color:var(--cream);background:rgba(255,255,255,.04);
+  border:1px solid var(--glass-line);border-radius:10px;padding:9px 12px;width:min(100%,330px);
+}
+.players input::placeholder{color:#5f7b71}
+
+.stats{display:flex;gap:0;justify-content:center;border:1px solid var(--glass-line);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.02)}
+.stat{flex:1;padding:10px 6px;text-align:center;border-right:1px solid var(--glass-line)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.stat.t b{color:var(--verd)} .stat.d b{color:var(--amber)}
+
+/* ---- карточка результата ---- */
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:5;
+  transform:translateY(101%);transition:transform .5s cubic-bezier(.16,1,.3,1);
+  will-change:transform;
+}
+.sheet.open{transform:translateY(0)}
+.scrim{position:fixed;inset:0;z-index:4;background:rgba(3,8,6,.62);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .4s ease}
+.scrim.open{opacity:1;pointer-events:auto}
+.card{
+  max-width:560px;margin:0 auto;background:linear-gradient(180deg,var(--glass-800),var(--glass-850));
+  border:1px solid var(--glass-line);border-bottom:0;border-radius:24px 24px 0 0;
+  padding:22px 22px calc(22px + env(safe-area-inset-bottom));
+  box-shadow:0 -20px 60px rgba(0,0,0,.6);position:relative;overflow:hidden;
+}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--accent,var(--amber))}
+.grab{width:44px;height:4px;border-radius:2px;background:var(--glass-line);margin:0 auto 16px}
+.kicker{display:flex;align-items:baseline;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.badge{font-size:11px;letter-spacing:.24em;text-transform:uppercase;font-weight:700;color:var(--accent,var(--amber))}
+.who{font-size:12px;color:var(--muted);letter-spacing:.05em}
+.task{font-family:var(--display);font-size:clamp(21px,5.4vw,28px);line-height:1.28;margin:0 0 20px;text-wrap:pretty}
+.card.pop .task{animation:rise .45s cubic-bezier(.16,1,.3,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+.btn{
+  font:inherit;font-size:14px;font-weight:600;border-radius:12px;padding:13px 16px;cursor:pointer;
+  border:1px solid var(--glass-line);background:rgba(255,255,255,.04);color:var(--cream);transition:.18s ease;flex:1;min-width:120px;
+}
+.btn:hover{background:rgba(255,255,255,.09);transform:translateY(-1px)}
+.btn.primary{background:var(--accent,var(--amber));border-color:transparent;color:#08130F}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{flex:0 0 auto;min-width:0;color:var(--muted)}
+.penalty{margin:14px 0 0;padding:12px 14px;border-radius:12px;background:rgba(217,72,59,.12);border:1px solid rgba(217,72,59,.35);font-size:14px;line-height:1.45;color:#F5C4BE}
+.penalty b{color:var(--cap);letter-spacing:.1em;text-transform:uppercase;font-size:11px;display:block;margin-bottom:4px}
+.hidden{display:none}
+
+footer{text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#4d675e;margin-top:auto;padding-top:8px}
+.mute{background:none;border:0;color:#4d675e;font:inherit;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.mute:hover{color:var(--muted)}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.12s!important}
+}
+</style>
+
+<div class="blob a"></div><div class="blob b"></div>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">правда · действие</div>
+    <h1>Буты<em>л</em>очка</h1>
+    <p class="sub">Крути. Куда встанет горлышко — то и делаешь. Отказ карается штрафом.</p>
+  </header>
+
+  <div class="levels" role="group" aria-label="Уровень жести">
+    <button class="chip" data-lvl="soft" aria-pressed="true">Разогрев</button>
+    <button class="chip" data-lvl="hot" aria-pressed="false">Жарко</button>
+    <button class="chip" data-lvl="x" aria-pressed="false">18+</button>
+  </div>
+
+  <div class="stage">
+    <div class="table armed" id="table" role="button" tabindex="0" aria-label="Крутить бутылку">
+      <svg class="ring" id="ring" viewBox="0 0 400 400" aria-hidden="true"></svg>
+      <div class="hub"></div>
+      <svg class="bottle" id="bottle" viewBox="0 0 120 300" aria-hidden="true">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#0d3327"/><stop offset=".28" stop-color="#2f7d5f"/>
+            <stop offset=".5" stop-color="#7fd6b0"/><stop offset=".72" stop-color="#2a6c53"/>
+            <stop offset="1" stop-color="#08211a"/>
+          </linearGradient>
+          <linearGradient id="lab" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#c9bda3"/><stop offset=".45" stop-color="#F1E8D6"/><stop offset="1" stop-color="#a89c84"/>
+          </linearGradient>
+        </defs>
+        <path d="M45 18h30v10c0 6 0 10 3 16l10 22c6 13 8 21 8 34v168c0 15-8 24-24 24H48c-16 0-24-9-24-24V100c0-13 2-21 8-34l10-22c3-6 3-10 3-16z" fill="url(#g)"/>
+        <rect x="43" y="8" width="34" height="16" rx="4" fill="#D9483B"/>
+        <rect x="43" y="8" width="34" height="5" rx="2" fill="#f0705f" opacity=".8"/>
+        <rect x="30" y="168" width="60" height="76" rx="6" fill="url(#lab)"/>
+        <rect x="36" y="182" width="48" height="3" rx="1.5" fill="#7a6f5c" opacity=".7"/>
+        <rect x="36" y="192" width="34" height="3" rx="1.5" fill="#7a6f5c" opacity=".5"/>
+        <rect x="36" y="216" width="48" height="3" rx="1.5" fill="#7a6f5c" opacity=".4"/>
+        <path d="M52 40c-4 12-10 24-11 46-1 22-1 150 0 176" stroke="#d8fff0" stroke-opacity=".55" stroke-width="5" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+  </div>
+
+  <p class="hint" id="hint">Нажми на стол или пробел</p>
+
+  <div class="players">
+    <input id="names" type="text" placeholder="Имена через запятую (по желанию)" autocomplete="off" aria-label="Имена игроков">
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b id="s-spins">0</b><span>кругов</span></div>
+    <div class="stat t"><b id="s-truth">0</b><span>правда</span></div>
+    <div class="stat d"><b id="s-dare">0</b><span>действие</span></div>
+    <div class="stat"><b id="s-skip">0</b><span>слились</span></div>
+  </div>
+
+  <footer><button class="mute" id="mute">звук: вкл</button></footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Задание">
+  <div class="card" id="card">
+    <div class="grab"></div>
+    <div class="kicker"><span class="badge" id="badge">Правда</span><span class="who" id="who"></span></div>
+    <p class="task" id="task"></p>
+    <div class="penalty hidden" id="penalty"><b>Штраф</b><span id="penaltyText"></span></div>
+    <div class="actions">
+      <button class="btn primary" id="done">Выполнено</button>
+      <button class="btn" id="skip">Слабак</button>
+      <button class="btn ghost" id="other">Другое</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TRUTH={
+soft:[
+"Какое самое стыдное фото хранится у тебя в галерее прямо сейчас?",
+"Кому из присутствующих ты писал(а) в три часа ночи и зачем?",
+"Из-за чего ты в последний раз плакал(а)?",
+"Какую песню ты орёшь в одиночестве, но никогда в этом не признаешься?",
+"Что из истории поиска ты удалил(а) бы первым делом?",
+"Самая нелепая причина, по которой ты обиделся(ась) на человека?",
+"Какой навык ты приписал(а) себе в резюме, которого у тебя нет?",
+"О чём ты соврал(а) на этой неделе?",
+"Кто в этом чате бесит тебя своей манерой переписки?",
+"Какую еду ты ешь так, что стыдно показывать людям?",
+"Самая бесполезная покупка этого года — сумма и предмет.",
+"Что ты гуглил(а) про кого-то из этой комнаты?",
+"Какой сериал ты смотришь, но всем врёшь, что не смотришь?",
+"Расскажи, как ты помахал(а) человеку, который махал не тебе.",
+"Какая у тебя самая нелепая фобия?",
+"Что ты делаешь дома один(на), когда точно уверен(а), что никто не видит?",
+"Кому ты последний раз завидовал(а) и за что конкретно?",
+"Назови свою самую позорную школьную кличку.",
+"Какое сообщение ты написал(а), но так и не отправил(а)?",
+"Сколько дней максимум ты не менял(а) постельное бельё? Только честно.",
+"За что тебя в последний раз откуда-нибудь выставили?",
+"Что ты украл(а) в детстве и не попался(ась)?",
+"Какая твоя черта, за которую тебя хвалят, но ты знаешь, что это враньё?",
+"Сколько раз ты перечитывал(а) одно сообщение перед отправкой сегодня?",
+"Какой самый глупый спор ты выиграл(а) и до сих пор гордишься?",
+"Что ты сказал(а) вслух, а потом полчаса переживал(а)?",
+"Кем ты хотел(а) стать в 10 лет и почему это провалилось?"
+],
+hot:[
+"Кого из присутствующих ты бы поцеловал(а), если бы завтра все всё забыли?",
+"Самое дерзкое место, где ты целовался(ась)?",
+"У кого в этой комнате самая недооценённая внешность?",
+"Ты читал(а) чужую переписку? Чью и что там нашёл(ла)?",
+"Какой комплимент ты сделал(а), думая ровно противоположное?",
+"Кому из бывших ты бы ответил(а) на «привет» прямо сейчас?",
+"Что заводит тебя в человеке, но вслух говорить об этом стыдно?",
+"Кому из этой комнаты ты бы дал(а) второй шанс?",
+"Худший подарок, которому ты изобразил(а) радость?",
+"Ты писал(а) двоим одновременно? Признавайся, сколько длилось.",
+"Кому здесь ты доверяешь меньше всего и почему?",
+"Ты возвращался(ась) к человеку, зная, что это ошибка? Чем кончилось?",
+"Что бы ты сделал(а), став невидимым(ой) ровно на час?",
+"Самое эгоистичное твоё решение за последний год.",
+"За кем ты следишь в соцсетях так, чтобы он(а) не узнал(а)?",
+"Самый неловкий момент на свидании, который ты готов(а) описать вслух.",
+"Кому ты не сказал(а) «люблю» и до сих пор жалеешь?",
+"Какое негласное правило в отношениях ты нарушал(а)?",
+"Что говорили про тебя за спиной, и ты об этом узнал(а)?",
+"Какое своё фото ты удалил(а) через пять минут после публикации и почему?",
+"Ты бы простил(а) измену? Отвечай без «зависит от ситуации».",
+"Кому из присутствующих ты бы отдал(а) свой телефон разблокированным на час?",
+"Расскажи о своём самом позорном флирте, который не сработал.",
+"Ты когда-нибудь специально делал(а) вид, что не заметил(а) человека на улице? Кого?",
+"Сколько раз ты влюблялся(ась) по-настоящему — и врал(а) ли ты об этом кому-то?",
+"Кто из твоих друзей никогда не должен встречаться с твоим бывшим/бывшей и почему?",
+"Что ты делаешь, чтобы понравиться, и сам(а) себя за это презираешь?",
+"Какое своё качество ты скрываешь на первых трёх свиданиях?"
+],
+x:[
+"Опиши свою последнюю фантазию тремя словами. Не больше и не меньше.",
+"Где было самое рискованное место, в котором вас чуть не застукали?",
+"Кого из присутствующих ты хоть раз представлял(а) в неприличном контексте?",
+"Какое твоё твёрдое «никогда» однажды стало «ну ладно»?",
+"Что тебе нравится, но ты боишься об этом попросить?",
+"Ты был(а) причиной чьего-то расставания? Рассказывай.",
+"Какое приложение для знакомств стоит у тебя сейчас и когда ты его открывал(а) в последний раз?",
+"Самая крупная ложь, которую ты сказал(а) партнёру.",
+"Что лежит у тебя в заметках телефона такого, что не должен видеть никто?",
+"Тебе признавались в чувствах, а ты это высмеял(а)? Как это выглядело?",
+"Что ты пишешь бывшим в три часа ночи? Процитируй.",
+"Сколько раз ты нарушал(а) собственное обещание «больше никогда»?",
+"Самый нелепый звук, который ты издавал(а) в интимный момент.",
+"С кем из знаменитостей ты бы изменил(а) без единой мысли о последствиях?",
+"Какой твой главный красный флаг, о котором тебе уже говорили вслух?",
+"Что ты делал(а) на спор и до сих пор не рассказываешь родителям?",
+"Сколько людей знают о тебе то, что ты скрываешь от всех остальных?",
+"Ты когда-нибудь врал(а) о своём опыте, чтобы казаться круче? В какую сторону?",
+"Кто из этой комнаты чаще всего снился тебе — и в каком жанре был сон?",
+"Твой самый постыдный поступок ради того, чтобы кого-то удержать.",
+"Что бы ты сделал(а), если бы твоя переписка за месяц вывелась на этот экран?",
+"Какую свою привычку ты скрываешь от всех, кто с тобой живёт?",
+"Назови три вещи, которые мгновенно выключают в тебе интерес к человеку.",
+"Ты когда-нибудь целовал(а) кого-то назло? Кому и зачем?",
+"Что ты сделал(а) бы за миллион, но сгорел(а) бы со стыда потом?",
+"Какая твоя фраза в переписке — чистая манипуляция, и ты это знаешь?",
+"Расскажи о моменте, когда тебе было максимально стыдно наутро."
+]};
+
+const DARE={
+soft:[
+"Позвони пятому контакту в списке и спой ему припев любой песни.",
+"Изобрази, как ты танцуешь, когда думаешь, что никто не видит. Тридцать секунд.",
+"Отдай телефон соседу справа: он публикует любую сторис от твоего имени.",
+"Следующие три круга говори только шёпотом.",
+"Съешь то, что тебе соберут из трёх ингредиентов с кухни.",
+"Изобрази кого-то из присутствующих так, чтобы остальные угадали.",
+"Сделай пятнадцать приседаний, называя на каждом одну свою слабость.",
+"Прочитай вслух последние три сообщения из чата с мамой голосом диктора новостей.",
+"Позвони другу и на полном серьёзе сообщи, что ты купил(а) страуса.",
+"Десять минут заканчивай каждую фразу словом «извините».",
+"Придумай и исполни рекламный слоган для человека слева.",
+"Спой национальный гимн, заменив все слова на «мяу».",
+"Дай соседу слева выбрать тебе новую аватарку из твоей же галереи. На час.",
+"Изобрази пантомимой, как прошёл твой вчерашний день. Без слов.",
+"Расскажи анекдот так, чтобы никто не засмеялся. Провалишься — ещё раз.",
+"Говори следующие пять минут только вопросами.",
+"Сделай десять отжиманий или выпей стакан воды залпом. Выбирай быстро.",
+"Изобрази трёх присутствующих, которых объединяет одна привычка.",
+"Позвони в любую доставку и спроси, доставляют ли они хорошее настроение.",
+"Придумай тост за столом длиной ровно в одно предложение — но красивый.",
+"Сыграй самого себя пятилетнего в течение двух минут.",
+"Дай любому игроку задать тебе один вопрос вне очереди — и ответь честно.",
+"Изобрази звук, который издаёт твой будильник, и своё лицо в этот момент.",
+"Станцуй под музыку, которую тебе включат, ровно двадцать секунд.",
+"Назови по имени всех присутствующих с закрытыми глазами, показывая пальцем."
+],
+hot:[
+"Прочитай вслух последнее сообщение в своём личном чате. Без правок.",
+"Покажи компании последнее фото в галерее. Любое.",
+"Сделай комплимент каждому в комнате — но такой, чтобы он звучал как обвинение.",
+"Напиши бывшему(ей) «я тут о тебе вспомнил(а)». Отправь.",
+"Дай соседу справа написать одно сообщение с твоего телефона любому контакту.",
+"Сядь на колени тому, кто справа, до конца следующего круга.",
+"Признайся вслух в одной вещи, из-за которой тебе может стать неловко.",
+"Позвони случайному контакту и скажи: «Я всё знаю». Молчи и слушай реакцию.",
+"Скажи каждому в комнате, на какое животное он похож. С объяснением.",
+"Обними человека, с которым ты меньше всего обнимался(ась). Досчитай до десяти.",
+"Покажи свои последние пять поисковых запросов.",
+"Опиши голосом рекламы то, как ты выглядишь по утрам.",
+"Дай компании прочитать вслух твой последний написанный комментарий в соцсети.",
+"Скажи тост, в котором признаёшься в чём-то стыдном. Все чокаются.",
+"Спародируй, как признаётся в любви человек напротив.",
+"Пусть каждый скажет о тебе одно честное слово. Ты молчишь и слушаешь.",
+"Позвони маме и скажи, что тебе срочно нужен совет по личной жизни. Прямо сейчас.",
+"Назови человека в комнате, с которым ты бы поехал(а) в отпуск вдвоём. Объясни.",
+"Поменяйся с кем-нибудь одним предметом одежды до конца игры.",
+"Расскажи о своей самой большой ошибке в отношениях так, будто это тост.",
+"Дай сидящему напротив три минуты допроса. Отвечай только «да» или «нет».",
+"Отправь голосовое любому контакту со словами: «Я подумал(а) и решил(а) — да».",
+"Изобрази человека, который тебе нравился в школе. Все угадывают тип.",
+"Скажи вслух то, что ты обычно думаешь, но не произносишь за этим столом.",
+"Дай компании выбрать три эмодзи и добавь их в свой профиль на сутки."
+],
+x:[
+"Пусть компания выберет двоих. Они смотрят друг другу в глаза одну минуту молча.",
+"Прочитай вслух свою переписку с последним человеком, которому ты писал(а) ночью.",
+"Разблокируй телефон и передай соседу. Тридцать секунд полной свободы.",
+"Признайся в одном желании, которое ты никогда никому не озвучивал(а).",
+"Поцелуй в щёку того, на кого укажет большинство. Или двойной штраф.",
+"Скажи каждому в комнате, что бы ты изменил(а) в нём, будь такая возможность.",
+"Позвони бывшему(ей) и спроси, что он(а) во мне вообще нашёл(ла). Громкая связь.",
+"Расскажи вслух то, за что тебя точно осудят за этим столом.",
+"Пусть игрок напротив задаст тебе любой вопрос. Отвечать обязан(а).",
+"Опиши идеальный вечер с человеком из этой комнаты. Не называя имени.",
+"Сними сторис с текстом, который тебе продиктует компания. Держи час.",
+"Сядь спиной к компании и слушай, как о тебе говорят три минуты. Не оборачивайся.",
+"Отправь голосовое сообщение с признанием любому контакту на выбор компании.",
+"Назови человека, чьё сообщение ты бы удалил(а) из своей жизни навсегда.",
+"Покажи фото, которое ты никогда не публиковал(а), но хранишь.",
+"Скажи вслух три вещи, которые ты хотел(а) бы услышать от кого-то за этим столом.",
+"Пусть компания придумает тебе новое имя. Отзывайся только на него до конца игры.",
+"Расскажи, что бы ты сделал(а), если бы этот вечер не имел последствий.",
+"Дай соседу слева прочитать вслух любые пять строк из твоих заметок.",
+"Признайся, кто в этой комнате хоть раз вызывал у тебя мурашки. Одно слово — имя.",
+"Опиши свой худший поцелуй в деталях, но так, чтобы это звучало как рецензия.",
+"Позволь компании поменять тебе статус в мессенджере на сутки.",
+"Назови того, кому ты бы доверил(а) свою тайну, и тут же расскажи её ему на ухо.",
+"Сделай признание, начинающееся со слов «я никогда не говорил(а) этого вслух, но…»."
+]};
+
+const PENALTIES=[
+"Три круга ты отвечаешь на любой вопрос честно и без права на «пас».",
+"Следующий раунд ты играешь с закрытыми глазами.",
+"Ты пьёшь залпом то, что тебе нальют. Или выполняешь два задания подряд.",
+"Ты отдаёшь телефон в центр стола на два круга. Экраном вверх.",
+"Ты десять минут говоришь о себе в третьем лице.",
+"Ты выполняешь любое задание, которое придумает человек справа. Без обсуждения.",
+"Ты стоишь до конца круга. Стул выбывает.",
+"Ты пишешь в общий чат то, что продиктует компания.",
+"Ты пропускаешь следующий круг и молчишь всё это время.",
+"Ты делаешь двадцать приседаний, называя на каждом причину, почему ты слился(ась)."
+];
+
+const SECTORS=8, STEP=360/SECTORS;
+const ring=document.getElementById('ring');
+const bottle=document.getElementById('bottle');
+const table=document.getElementById('table');
+const hint=document.getElementById('hint');
+const sheet=document.getElementById('sheet'), scrim=document.getElementById('scrim'), card=document.getElementById('card');
+const badge=document.getElementById('badge'), taskEl=document.getElementById('task'), whoEl=document.getElementById('who');
+const penalty=document.getElementById('penalty'), penaltyText=document.getElementById('penaltyText');
+let level='soft', spinning=false, rot=0, sound=true, lastKind='truth';
+const stats={spins:0,truth:0,dare:0,skip:0};
+const bags={};
+
+/* ---- кольцо ---- */
+const P=(r,a)=>[200+r*Math.sin(a*Math.PI/180),200-r*Math.cos(a*Math.PI/180)];
+let svg='';
+for(let i=0;i<SECTORS;i++){
+  const a0=i*STEP,a1=a0+STEP,truth=i%2===0,rO=192,rI=126;
+  const[x0,y0]=P(rO,a0),[x1,y1]=P(rO,a1),[x2,y2]=P(rI,a1),[x3,y3]=P(rI,a0);
+  const col=truth?'#5FBF9A':'#E9A13B';
+  svg+=`<path class="wedge" data-i="${i}" d="M${x0} ${y0}A${rO} ${rO} 0 0 1 ${x1} ${y1}L${x2} ${y2}A${rI} ${rI} 0 0 0 ${x3} ${y3}Z" fill="${col}" fill-opacity="${truth?.13:.15}" stroke="${col}" stroke-opacity=".45" stroke-width="1" style="color:${col}"/>`;
+  const mid=a0+STEP/2, flip=mid>90&&mid<270;
+  const[lx,ly]=P(159,mid);
+  svg+=`<text class="wlabel" x="${lx}" y="${ly}" fill="${col}" fill-opacity=".9" text-anchor="middle" dominant-baseline="middle" transform="rotate(${flip?mid+180:mid} ${lx} ${ly})">${truth?'Правда':'Действие'}</text>`;
+}
+svg+='<circle cx="200" cy="200" r="124" fill="none" stroke="#215043" stroke-width="1"/><circle cx="200" cy="200" r="194" fill="none" stroke="#215043" stroke-width="1"/>';
+ring.innerHTML=svg;
+
+/* ---- звук ---- */
+let ac=null;
+function tick(v){
+  if(!sound)return;
+  try{
+    ac=ac||new (window.AudioContext||window.webkitAudioContext)();
+    const o=ac.createOscillator(),g=ac.createGain();
+    o.type='triangle';o.frequency.value=520+Math.random()*90;
+    g.gain.setValueAtTime(0.0001,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.05*v,ac.currentTime+0.005);
+    g.gain.exponentialRampToValueAtTime(0.0001,ac.currentTime+0.11);
+    o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+0.12);
+  }catch(e){}
+}
+
+/* ---- выборка заданий без повторов ---- */
+function pools(kind){
+  const src=kind==='truth'?TRUTH:DARE;
+  if(level==='soft')return src.soft;
+  if(level==='hot')return src.soft.concat(src.hot);
+  return src.hot.concat(src.x);
+}
+function pick(kind){
+  const key=kind+'-'+level, list=pools(kind);
+  if(!bags[key]||!bags[key].length){
+    bags[key]=list.slice();
+    for(let i=bags[key].length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[bags[key][i],bags[key][j]]=[bags[key][j],bags[key][i]];}
+  }
+  return bags[key].pop();
+}
+function player(){
+  const raw=document.getElementById('names').value.split(',').map(s=>s.trim()).filter(Boolean);
+  return raw.length?raw[(Math.random()*raw.length)|0]:'';
+}
+
+/* ---- вращение ---- */
+const easeOut=t=>1-Math.pow(1-t,4);
+function spin(){
+  if(spinning)return;
+  spinning=true;table.classList.remove('armed');closeSheet();
+  ring.classList.remove('dim');
+  document.querySelectorAll('.wedge').forEach(w=>w.classList.remove('win'));
+  hint.textContent='Крутится…';
+  const target=(Math.random()*SECTORS)|0;
+  const jitter=(Math.random()*0.62+0.19)*STEP;
+  const cur=((rot%360)+360)%360;
+  const delta=(target*STEP+jitter-cur+360)%360;
+  const from=rot, to=rot+360*(4+((Math.random()*3)|0))+delta;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const dur=reduced?400:3600+Math.random()*900;
+  const t0=performance.now();let lastSector=-1;
+  (function frame(now){
+    const p=Math.min((now-t0)/dur,1);
+    rot=from+(to-from)*easeOut(p);
+    bottle.style.transform=`rotate(${rot}deg)`;
+    const s=Math.floor((((rot%360)+360)%360)/STEP);
+    if(s!==lastSector){lastSector=s;tick(1-p*0.75);}
+    if(p<1)requestAnimationFrame(frame);else land(target);
+  })(t0);
+}
+function land(i){
+  spinning=false;
+  const kind=i%2===0?'truth':'dare';lastKind=kind;
+  ring.classList.add('dim');
+  const w=ring.querySelector(`.wedge[data-i="${i}"]`);if(w)w.classList.add('win');
+  stats.spins++;stats[kind]++;render();
+  show(kind);
+}
+function show(kind){
+  const truth=kind==='truth';
+  card.style.setProperty('--accent',truth?'var(--verd)':'var(--amber)');
+  badge.textContent=truth?'Правда':'Действие';
+  const p=player();
+  whoEl.textContent=p?`отвечает ${p}`:'по направлению горлышка';
+  taskEl.textContent=pick(kind);
+  penalty.classList.add('hidden');
+  card.classList.remove('pop');void card.offsetWidth;card.classList.add('pop');
+  sheet.classList.add('open');scrim.classList.add('open');
+  hint.innerHTML=truth?'Выпала <b>правда</b>':'Выпало <b>действие</b>';
+  document.getElementById('done').focus({preventScroll:true});
+}
+function closeSheet(){sheet.classList.remove('open');scrim.classList.remove('open');}
+function render(){
+  document.getElementById('s-spins').textContent=stats.spins;
+  document.getElementById('s-truth').textContent=stats.truth;
+  document.getElementById('s-dare').textContent=stats.dare;
+  document.getElementById('s-skip').textContent=stats.skip;
+}
+
+/* ---- события ---- */
+table.addEventListener('click',spin);
+table.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();spin();}});
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'&&e.target.tagName!=='INPUT'&&!sheet.classList.contains('open')){e.preventDefault();spin();}
+  if(e.key==='Escape')closeSheet();
+});
+document.getElementById('done').addEventListener('click',()=>{closeSheet();table.classList.add('armed');hint.textContent='Красавчик. Крути дальше';});
+document.getElementById('other').addEventListener('click',()=>{taskEl.textContent=pick(lastKind);card.classList.remove('pop');void card.offsetWidth;card.classList.add('pop');tick(.6);});
+document.getElementById('skip').addEventListener('click',()=>{
+  stats.skip++;render();
+  penaltyText.textContent=PENALTIES[(Math.random()*PENALTIES.length)|0];
+  penalty.classList.remove('hidden');
+  hint.textContent='Слился. Штраф назначен';
+});
+scrim.addEventListener('click',()=>{closeSheet();table.classList.add('armed');});
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+  document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));
+  c.setAttribute('aria-pressed','true');level=c.dataset.lvl;tick(.5);
+  hint.textContent=level==='soft'?'Режим: разогрев':level==='hot'?'Режим: жарко':'Режим 18+. Без обид';
+}));
+const muteBtn=document.getElementById('mute');
+muteBtn.addEventListener('click',()=>{sound=!sound;muteBtn.textContent='звук: '+(sound?'вкл':'выкл');if(sound)tick(1);});
+render();
+</script>
